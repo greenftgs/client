@@ -15,16 +15,17 @@ def create_db(cur):
         client_id INT NOT NULL REFERENCES client(id),
         phone INT (10) NOT NULL UNIQUE);
     """)
-
     cur.commit()
 
 def add_client(cur, first_name, last_name, email):
+    cur.execute("""
     INSERT INTO client(first_name, last_name, email)
     VALUES(%s, %s, %s);
     """, (first_name, last_name, email))
     cur.commit()
 
 def add_phone(cur, client_id, phone):
+    cur.execute("""
     INSERT INTO phones(client_id, phone)
     VALUES(%s, %s);
     """, (client_id, phone))
