@@ -31,12 +31,14 @@ def add_phone(cur, client_id, phone):
     """, (client_id, phone))
     cur.commit()
 
+
 def add_phone(cur, client_id, phone):
     cur.execute("""
     INSERT INTO phones(client_id, phone)
     VALUES (%s, %s) RETURNING phone;
     """, (client_id, phone))
     cur.commit()
+
 
 def search_client(cur, first_name=None, last_name=None, email=None, phone=None):
     if not first_name:
@@ -60,9 +62,10 @@ def search_client(cur, first_name=None, last_name=None, email=None, phone=None):
             """, (phone,))
     return cur.fetchall()
 
+
 def change_client(cur, id, first_name=None, last_name=None, email=None, phone=None):
     print("Выберите тип данных для изменения и введите одну цифру от 1 до 4.\n "
-        "1- имя клиента, 2 - фамилия клиента, 3- email клиента, 4- номер телефона клиента")
+          "1- имя клиента, 2 - фамилия клиента, 3- email клиента, 4- номер телефона клиента")
 
     while True:
         change_type = int(input())
@@ -97,6 +100,7 @@ def change_client(cur, id, first_name=None, last_name=None, email=None, phone=No
         else:
             print(f"Введена неверная команда, поторите попытку. {change_client()}")
 
+
 def delete_phone(cur, client_id, phone):
     id_delete_phone = input("Укажите id клиента для удаления номера: ")
     phone_for_delete = input("Какой номер телефона хотите удалить: ")
@@ -104,6 +108,7 @@ def delete_phone(cur, client_id, phone):
         cur.execute("""
            DELETE FROM phone WHERE client_id=%s AND phone=%s
            """, (id_delete_phone, phone_for_delete))
+
 
 def delete_client(cur, client_id):
     id_delete_client = input("Укажите id клиента которого хотите удалить: ")
@@ -117,6 +122,7 @@ def delete_client(cur, client_id):
         """, (id_delete_client, last_name_delete_client))
 
     return cur.fetchall()
+
 
 with psycopg2.connect(database='client_db', user='postgres', password='1331') as conn:
     with conn.cursor() as cur:
