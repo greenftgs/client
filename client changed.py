@@ -1,5 +1,6 @@
 import psycopg2
 
+
 def create_db(cur):
     cur.execute("""
     CREATE TABLE IF NOT EXISTS clients(
@@ -17,6 +18,7 @@ def create_db(cur):
     """)
     cur.commit()
 
+
 def add_client(conn, first_name, last_name, email, phone=None):
     with conn.cursor() as cur:
         if search_client(cur, email=email):
@@ -26,7 +28,7 @@ def add_client(conn, first_name, last_name, email, phone=None):
         VALUES(%s, %s, %s) RETURNING id;
         """, (first_name, last_name, email))
 
-        if phone != None:
+        if phone is not None:
             id_with_phone = cur.fetchone()[0]
             add_phone(cur, id_with_phone, "9657773655")
         cur.commit()
@@ -76,7 +78,7 @@ def change_client(conn, id, first_name=None, last_name=None, email=None, phones=
         data_list = [first_name, last_name, email]
         for i, data in enumerate(data_list, start=1):
             if not i:
-                data_list[1,2,3] = data_list[first_name, last_name, email]
+                data_list[i] = data_list[data]
         data_list.append(id)
 
         cur.execute("""
@@ -86,6 +88,7 @@ def change_client(conn, id, first_name=None, last_name=None, email=None, phones=
 
     cur.commit()
     return "Пользователь успешно изменен"
+
 
 def delete_phone(cur, client_id, phone):
     id_delete_phone = input("Укажите id клиента для удаления номера: ")
