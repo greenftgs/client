@@ -6,30 +6,30 @@ def create_db(cur):
         id SERIAL PRIMARY KEY,
         first_name VARCHAR(33) NOT NULL,
         last_name VARCHAR(50) NOT NULL,
-        email VARCHAR(40) NOT NULL);
+        email VARCHAR(40) NOT NULL UNIQUE);
     """)
 
     cur.execute("""
     CREATE TABLE IF NOT EXISTS phones(
         id_phone SERIAL PRIMARY KEY,
-        client_id INT NOT NULL REFERENCES client(id),
-        phone INT (10) NOT NULL UNIQUE);
+        client_id INT NOT NULL REFERENCES client(id) ON DELETE CASCADE,
+        phone BIGINT UNIQUE);
     """)
     cur.commit()
 
-def add_client(cur, first_name, last_name, email):
-    cur.execute("""
-    INSERT INTO client(first_name, last_name, email)
-    VALUES(%s, %s, %s);
-    """, (first_name, last_name, email))
-    cur.commit()
+def add_client(conn, first_name, last_name, email, phone=None):
+    with conn.cursor() as cur:
+        if search_client(cur, email=email):
+            return ('Клиент с таким емейлом уже есть.')
+        cur.execute("""
+        INSERT INTO client(first_name, last_name, email)
+        VALUES(%s, %s, %s) RETURNING id;
+        """, (first_name, last_name, email))
 
-def add_phone(cur, client_id, phone):
-    cur.execute("""
-    INSERT INTO phones(client_id, phone)
-    VALUES(%s, %s);
-    """, (client_id, phone))
-    cur.commit()
+        if phone != None:
+            id_with_phone = curs.fetchone()[0]
+            add_phone(cur, id_with_phone, "9657773655")
+        cur.commit()
 
 
 def add_phone(cur, client_id, phone):
@@ -100,6 +100,29 @@ def change_client(cur, id, first_name=None, last_name=None, email=None, phone=No
         else:
             print(f"Введена неверная команда, поторите попытку. {change_client()}")
 
+def change_client(conn, id, first_name=None, last_name=None, email=None, phones=None):
+    with conn.cursor() as cur:
+        cur.execute("""
+        SELECT first_name, last_name, email FROM clients
+        WHERE id=%s;
+        """,(id,))
+        id_change  = curs.fetchone()
+
+        if id_change is None:
+            return 'Такого пользователя нет'
+        data_list = [first_name, last_name, email]
+        for i, data in enumerate(data_list, start=1):
+            if not i:
+                data_list[1,2,3] = data_list[first_name, last_name, email]
+        data_list.append(id)
+
+        cur.execute("""
+        UPDATE clients 
+        SET first_name = %s, last_name = %s, email = %s WHERE id = %s;
+        """, (first_name, last_name, email))
+
+    cur.commit()
+return "Пользователь успешно изменен"
 
 def delete_phone(cur, client_id, phone):
     id_delete_phone = input("Укажите id клиента для удаления номера: ")
@@ -114,9 +137,6 @@ def delete_client(cur, client_id):
     id_delete_client = input("Укажите id клиента которого хотите удалить: ")
     last_name_delete_client = input("Укажите фамилию клиента которого хотите удалить: ")
     with conn.cursor() as cur:
-        cur.execute("""
-        DELETE FROM phone WHERE client_id=%s
-        """, (id_delete_client,))
         cur.execute("""
         DELETE FROM clients WHERE id=%s AND last_name=%s
         """, (id_delete_client, last_name_delete_client))
