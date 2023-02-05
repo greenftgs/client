@@ -109,7 +109,6 @@ def delete_client(conn, id_delete_client, last_name_delete_client):
     RETURNING *
 
 
-
 with psycopg2.connect(database='client_db', user='postgres', password='1331') as conn:
     with conn.cursor() as cur:
         create_db(cur)
