@@ -14,6 +14,7 @@ class Publisher(Base):
     def __str__(self):
         return f'Издательство: {self.name}, номер: {self.id_publisher}'
 
+
 class Book(Base):
     __tablename__ = "book"
 
@@ -26,6 +27,7 @@ class Book(Base):
     def __str__(self):
         return f'Книга: {self.title}, номер: {self.id_book}'
 
+
 class Shop(Base):
     __tablename__ = "shop"
 
@@ -34,6 +36,7 @@ class Shop(Base):
 
     def __str__(self):
         return f'Магазин: {self.name}, номер: {self.id_book}'
+
 
 class Stock(Base):
     __tablename__ = "stock"
@@ -49,6 +52,7 @@ class Stock(Base):
     def __str__(self):
         return f'Наличие: номер книги - {self.id_book}, магазин - {self.id_shop}, количество - {self.count}'
 
+
 class Sale(Base):
     __tablename__ = "sale"
 
@@ -63,6 +67,7 @@ class Sale(Base):
     def __str__(self):
         return f'Продано: номер продажи - {self.id_sale}, номер на складе - {self.id_stock}, ' \
                f'количество - {self.count}, дата продажи - {self.date_sale}, стоимость - {self.price}'
+
 
 def create_tables(engine):
     Base.metadata.create_all(engine)

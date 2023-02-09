@@ -67,14 +67,10 @@ search_id = input('Введите id издателя для поиска кни
 search_id = int(search_id)
 
 result_query = session.query(
-    Sale
-).join(
-    Stock, Stock.id_stock == Sale.id_stock
-).join(
-    Shop, Shop.id_shop == Stock.id_shop
-).join(
-    Book, Book.id_book == Stock.id_book
-).join(
+    Sale).join(
+    Stock, Stock.id_stock == Sale.id_stock).join(
+    Shop, Shop.id_shop == Stock.id_shop).join(
+    Book, Book.id_book == Stock.id_book).join(
     Publisher, Publisher.id == Book.id_publisher
 )
 for sale in result_query.filter(Publisher.id == search_id):
