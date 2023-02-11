@@ -23,6 +23,6 @@ def get_shops(publisher):
 
 if __name__ == '__main__':
     search_pub = input('Введите имя или id издателя для поиска книг в магазине: ').lower()
-    print(get_shops(publisher))
+    print(get_shops(search_pub))
 
 db.close()
