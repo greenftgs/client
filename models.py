@@ -1,6 +1,6 @@
-import sqlalchemy
 import sqlalchemy as sq
 from sqlalchemy.orm import declarative_base, relationship
+from connect import db
 
 Base = declarative_base()
 
@@ -8,7 +8,7 @@ Base = declarative_base()
 class Publisher(Base):
     __tablename__ = "publisher"
 
-    id_publisher = sq.Column(sq.Serial, primary_key=True)
+    id_publisher = sq.Column(sq.Integer, primary_key=True, autoincrement=True)
     name = sq.Column(sq.String(length=60), unique=True)
 
     def __str__(self):
@@ -18,9 +18,9 @@ class Publisher(Base):
 class Book(Base):
     __tablename__ = "book"
 
-    id_book = sq.Column(sq.Serial, primary_key=True)
+    id_book = sq.Column(sq.Integer, primary_key=True, autoincrement=True)
     title = sq.Column(sq.String(length=140), unique=True)
-    id_publisher = sq.Column(sq.Serial, sq.ForeignKey("publisher.id_publisher"), nullable=False)
+    id_publisher = sq.Column(sq.Integer, sq.ForeignKey("publisher.id_publisher"), nullable=False)
 
     publisher = relationship(Publisher, backref="book")
 
@@ -31,7 +31,7 @@ class Book(Base):
 class Shop(Base):
     __tablename__ = "shop"
 
-    id_shop = sq.Column(sq.Serial, primary_key=True)
+    id_shop = sq.Column(sq.Integer, primary_key=True, autoincrement=True)
     name = sq.Column(sq.String(length=60), unique=True)
 
     def __str__(self):
@@ -41,10 +41,10 @@ class Shop(Base):
 class Stock(Base):
     __tablename__ = "stock"
 
-    id_stock = sq.Column(sq.Serial, primary_key=True)
+    id_stock = sq.Column(sq.Integer, primary_key=True, autoincrement=True)
     count = sq.Column(sq.Integer, nullable=False)
-    id_book = sq.Column(sq.Serial, sq.ForeignKey("book.id_book"), nullable=False)
-    id_shop = sq.Column(sq.Serial, sq.ForeignKey("shop.id_shop"), nullable=False)
+    id_book = sq.Column(sq.Integer, sq.ForeignKey("book.id_book"), nullable=False)
+    id_shop = sq.Column(sq.Integer, sq.ForeignKey("shop.id_shop"), nullable=False)
 
     book = relationship(Book, backref="stock")
     shop = relationship(Shop, backref="stock")
@@ -56,10 +56,10 @@ class Stock(Base):
 class Sale(Base):
     __tablename__ = "sale"
 
-    id_sale = sq.Column(sq.Serial, primary_key=True)
-    price = sq.Column(sq.Money, nullable=False)
+    id_sale = sq.Column(sq.Integer, primary_key=True, autoincrement=True)
+    price = sq.Column(sq.Float, nullable=False)
     date_sale = sq.Column(sq.Date, nullable=False)
-    id_stock = sq.Column(sq.Serial, sq.ForeignKey("stock.id_stock"), nullable=False)
+    id_stock = sq.Column(sq.Integer, sq.ForeignKey("stock.id_stock"), nullable=False)
     count = sq.Column(sq.Integer, nullable=False)
 
     stock = relationship(Stock, backref="sale")
@@ -73,6 +73,6 @@ def create_tables(engine):
     Base.metadata.create_all(engine)
 
 
-DSN = "postgresql://postgres:postgres@localhost:5432/music"
-engine = sqlalchemy.create_engine(DSN)
 create_tables(engine)
+
+db.close()

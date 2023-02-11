@@ -1,14 +1,8 @@
-import sqlalchemy
 from sqlalchemy.orm import sessionmaker
+from connect import db
+from models import Publisher, Book, Shop, Sale, Stock
 
-from models import create_tables, Publisher, Book, Shop, Sale, Stock
 
-DSN = 'postgresql://postgres:postgres@localhost:5432/orm'
-engine = sqlalchemy.create_engine(DSN)
-
-create_tables(engine)
-
-Session = sessionmaker(bind=engine)
 session = Session()
 
 publisher1 = Publisher(name='РусКнига')
@@ -60,21 +54,5 @@ sale10 = Sale(id_stock='7', count='84', price='100123.03', date_sale='2018-03-18
 session.add([sale1, sale2, sale3, sale4, sale5, sale6, sale7, sale8, sale9, sale10])
 session.commit()
 
-for c in session.query(Publisher).all():
-    print(c)
 
-search_id = input('Введите id издателя для поиска книг в магазине: ')
-search_id = int(search_id)
-
-result_query = session.query(
-    Sale).join(
-    Stock, Stock.id_stock == Sale.id_stock).join(
-    Shop, Shop.id_shop == Stock.id_shop).join(
-    Book, Book.id_book == Stock.id_book).join(
-    Publisher, Publisher.id == Book.id_publisher
-)
-for sale in result_query.filter(Publisher.id == search_id):
-    print(f'{sale.stock.book.title} | {sale.stock.shop.name}')
-
-
-session.close()
+db.close()
