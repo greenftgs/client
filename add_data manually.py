@@ -1,9 +1,6 @@
-from sqlalchemy.orm import sessionmaker
 from connect import db
 from models import Publisher, Book, Shop, Sale, Stock
 
-
-session = Session()
 
 publisher1 = Publisher(name='РусКнига')
 publisher2 = Publisher(name='NewBook')

@@ -1,5 +1,4 @@
 import json
-from sqlalchemy.orm import sessionmaker
 
 from connect import db
 
@@ -8,7 +7,6 @@ from models import Publisher, Shop, Book, Stock, Sale
 
 file_path = './orm/tests_data.json'
 
-session = Session()
 
 with open('tests_data.json', 'r') as fd:
     data = json.load(fd)
